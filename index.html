@@ -26,7 +26,7 @@ body{
 }
 
 .header{
-    background:#000;   /* PURE BLACK HEADER */
+    background:#1a73e8;
     color:white;
     text-align:center;
     height:60px;
@@ -167,7 +167,7 @@ button:hover{ background:#1558b0; }
 <body>
 
 <div class="app">
-<div class="header"></div>
+<div class="header">Googlee Pay</div>
 
 <div class="screen" id="homeScreen">
     <div class="info" id="nameInfo"></div>
@@ -200,7 +200,7 @@ button:hover{ background:#1558b0; }
 </div>
 
 <script>
-let correctPin = "5678";
+let correctPin = "1234";
 let html5QrCode;
 let payeeName = "";
 let currentZoom = 1;
@@ -262,13 +262,14 @@ function startQR(){
             const video=document.querySelector("#reader video");
             if(video){
                 videoTrack=video.srcObject.getVideoTracks()[0];
-                currentZoom=2;
+                currentZoom=2;      // AUTO ZOOM ON START
                 applyZoom();
             }
 
             setTimeout(()=>{
                 const scanLine=document.createElement("div");
                 scanLine.className="scan-line";
+                scanLine.id="scanLine";
                 reader.appendChild(scanLine);
             },300);
         });
@@ -298,4 +299,4 @@ function processPayment(){
 </script>
 
 </body>
-</html> 
+</html>
