@@ -1,5 +1,5 @@
 <!--This project is a payment app UI simulation made for educational purposes.
-It is not affiliated with Google or Google Pay.-->
+It is not affiliated with Google or Google Pay or any other payment apps.-->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -164,6 +164,22 @@ button:hover{ background:#1558b0; }
 }
 
 .time{ color:#9e9e9e; font-size:14px; }
+
+/* PROCESSING SPINNER */
+.spinner{
+    margin:40px auto;
+    width:60px;
+    height:60px;
+    border:6px solid #1e1e1e;
+    border-top:6px solid #1a73e8;
+    border-radius:50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin{
+    0%{ transform: rotate(0deg); }
+    100%{ transform: rotate(360deg); }
+}
 </style>
 </head>
 
@@ -172,6 +188,7 @@ button:hover{ background:#1558b0; }
 <div class="app">
 <div class="header">Epay</div>
 
+<!-- HOME SCREEN -->
 <div class="screen" id="homeScreen">
     <div class="info" id="nameInfo"></div>
     <input type="text" id="receiver" placeholder="Receiver / UPI ID" readonly>
@@ -187,12 +204,20 @@ button:hover{ background:#1558b0; }
     </div>
 </div>
 
+<!-- PIN SCREEN -->
 <div class="screen hidden" id="pinScreen">
     <p style="text-align:center;font-weight:bold;color:#fff;">Enter UPI PIN</p>
     <input type="password" id="pin" maxlength="4" placeholder="••••">
     <button onclick="processPayment()">Verify</button>
 </div>
 
+<!-- PROCESSING SCREEN -->
+<div class="screen hidden" id="processingScreen" style="text-align:center;color:#fff;">
+    <p style="font-weight:bold;font-size:20px;margin-top:200px;">Processing Payment...</p>
+    <div class="spinner"></div>
+</div>
+
+<!-- SUCCESS SCREEN -->
 <div class="screen hidden success-screen" id="successScreen">
     <div class="tick">✓</div>
     <div class="amount" id="finalAmount">₹0</div>
@@ -289,15 +314,20 @@ function processPayment(){
     if(pin.value!==correctPin){ alert("Wrong PIN"); return; }
 
     pinScreen.classList.add("hidden");
-    successScreen.classList.remove("hidden");
+    processingScreen.classList.remove("hidden");  // show processing
 
-    finalAmount.innerText="₹"+Number(amount.value).toFixed(2);
-    finalName.innerText=payeeName;
+    setTimeout(()=>{
+        processingScreen.classList.add("hidden");
+        successScreen.classList.remove("hidden");
 
-    let now=new Date();
-    timeStamp.innerText=
-        now.toLocaleDateString("en-IN")+" "+
-        now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+        finalAmount.innerText="₹"+Number(amount.value).toFixed(2);
+        finalName.innerText=payeeName;
+
+        let now=new Date();
+        timeStamp.innerText=
+            now.toLocaleDateString("en-IN")+" "+
+            now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
+    }, 2000);  // 2-second processing delay
 }
 </script>
 
