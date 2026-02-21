@@ -1,241 +1,311 @@
 <!--This project is a payment app UI simulation made for educational purposes.  
-It is not affiliated with Google or Google Pay or any other payment apps.-->
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Pay Demo (Dark Mode)</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://unpkg.com/html5-qrcode"></script>
-
-<style>
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#000;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
-
-.app{
-    width:360px;
-    height:740px;
-    background:#121212;
-    box-shadow:0 0 30px rgba(0,0,0,0.9);
-    overflow:hidden;
-}
-
-.header{
-    background:#2196F3;
-    color:white;
-    text-align:center;
-    height:60px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:22px;
-    font-weight:bold;
-}
-
-.screen{ padding:20px; }
-.hidden{ display:none; }
-
-input{
-    width:100%;
-    padding:14px;
-    font-size:18px;
-    border:none;
-    border-bottom:2px solid #333;
-    background:#1e1e1e;
-    color:#fff;
-    outline:none;
-    text-align:center;
-    margin-bottom:15px;
-}
-input::placeholder{ color:#888; }
-
-button{
-    width:100%;
-    padding:14px;
-    background:#2196F3;
-    color:white;
-    border:none;
-    border-radius:30px;
-    font-size:18px;
-    cursor:pointer;
-    margin-top:10px;
-}
-button:hover{ background:#2196F3; }
-
-.info{
-    text-align:center;
-    font-size:16px;
-    margin-bottom:10px;
-    color:#cfcfcf;
-}
-
-/* QR READER */
-#reader{
-    margin-top:10px;
-    position:relative;
-    overflow:hidden;
-    background:#000;
-    border-radius:12px;
-}
-
-#reader video{
-    width:100% !important;
-    height:auto !important;
-    object-fit:cover;
-}
-
-/* SCAN ANIMATION */
-.scan-line{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:3px;
-    background:linear-gradient(to right, transparent, #2196F3, transparent);
-    animation:scanMove 2s linear infinite;
-    z-index:10;
-}
-@keyframes scanMove{
-    0%{ top:0; }
-    50%{ top:50%; }
-    100%{ top:100%; }
-}
-
-/* ZOOM CONTROLS */
-.zoom-controls{
-    position:absolute;
-    bottom:10px;
-    right:10px;
-    display:flex;
-    gap:8px;
-    z-index:20;
-}
-.zoom-btn{
-    width:36px;
-    height:36px;
-    border-radius:50%;
-    border:none;
-    background:#2196F3;
-    color:#fff;
-    font-size:20px;
-    cursor:pointer;
-}
-
-/* SUCCESS SCREEN */
-.success-screen{
-    background:#0b0b0b;
-    color:white;
-    text-align:center;
-    height:680px;
-}
-
-.tick{
-    width:90px;
-    height:90px;
-    background:#2196F3;
-    border-radius:50%;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    margin:60px auto 25px;
-    font-size:48px;
-}
-
-.amount{ font-size:42px; margin-bottom:20px; }
-.label{ color:#9e9e9e; font-size:16px; }
-.name{ font-size:26px; margin:8px 0; }
-
-.bank{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:6px;
-    font-size:15px;
-    color:#cfcfcf;
-    margin-bottom:20px;
-}
-
-.time{ color:#9e9e9e; font-size:14px; }
-
-/* PROCESSING SPINNER */
-.spinner{
-    margin:40px auto;
-    width:60px;
-    height:60px;
-    border:6px solid #1e1e1e;
-    border-top:6px solid #2196F3;
-    border-radius:50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin{
-    0%{ transform: rotate(0deg); }
-    100%{ transform: rotate(360deg); }
-}
-</style>
-</head>
-
-<body>
-<div class="app">
-<div class="header">Epay</div>
-
-<!-- HOME SCREEN -->
-<div class="screen" id="homeScreen">
-    <div class="info" id="nameInfo"></div>
-    <input type="text" id="receiver" placeholder="Receiver / UPI ID" readonly>
-    <input type="number" id="amount" placeholder="₹ Enter Amount">
-    <button onclick="startQR()"> Scan QR</button>
-    <button onclick="goToPin()">Pay</button>
-
-    <div id="reader" class="hidden">
-        <div class="zoom-controls">
-            <button class="zoom-btn" onclick="zoomIn()">+</button>
-            <button class="zoom-btn" onclick="zoomOut()">−</button>
-        </div>
-    </div>
+It is not affiliated with Google or Google Pay or any other payment apps.-->  <!DOCTYPE html>  <html lang="en">  
+<head>  
+<meta charset="UTF-8">  
+<title>Pay Demo (Dark Mode)</title>  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<script src="https://unpkg.com/html5-qrcode"></script>  <style>  
+body{  
+    margin:0;  
+    font-family:Arial, sans-serif;  
+    background:#000;  
+    display:flex;  
+    justify-content:center;  
+    align-items:center;  
+    height:100vh;  
+}  
+  
+.app{  
+    width:360px;  
+    height:740px;  
+    background:#121212;  
+    box-shadow:0 0 30px rgba(0,0,0,0.9);  
+    overflow:hidden;  
+}  
+  
+.header{  
+    background:#1a73e8;  
+    color:white;  
+    text-align:center;  
+    height:60px;  
+    display:flex;  
+    align-items:center;  
+    justify-content:center;  
+    font-size:22px;  
+    font-weight:bold;  
+}  
+  
+.screen{ padding:20px; }  
+.hidden{ display:none; }  
+  
+input{  
+    width:100%;  
+    padding:14px;  
+    font-size:18px;  
+    border:none;  
+    border-bottom:2px solid #333;  
+    background:#1e1e1e;  
+    color:#fff;  
+    outline:none;  
+    text-align:center;  
+    margin-bottom:15px;  
+}  
+input::placeholder{ color:#888; }  
+  
+button{  
+    width:100%;  
+    padding:14px;  
+    background:#1a73e8;  
+    color:white;  
+    border:none;  
+    border-radius:30px;  
+    font-size:18px;  
+    cursor:pointer;  
+    margin-top:10px;  
+}  
+button:hover{ background:#1558b0; }  
+  
+.info{  
+    text-align:center;  
+    font-size:16px;  
+    margin-bottom:10px;  
+    color:#cfcfcf;  
+}  
+  
+/* QR READER */  
+#reader{  
+    margin-top:10px;  
+    position:relative;  
+    overflow:hidden;  
+    background:#000;  
+    border-radius:12px;  
+}  
+  
+#reader video{  
+    width:100% !important;  
+    height:auto !important;  
+    object-fit:cover;  
+}  
+  
+/* SCAN ANIMATION */  
+.scan-line{  
+    position:absolute;  
+    top:0;  
+    left:0;  
+    width:100%;  
+    height:3px;  
+    background:linear-gradient(to right, transparent, #1a73e8, transparent);  
+    animation:scanMove 2s linear infinite;  
+    z-index:10;  
+}  
+@keyframes scanMove{  
+    0%{ top:0; }  
+    50%{ top:50%; }  
+    100%{ top:100%; }  
+}  
+  
+/* ZOOM CONTROLS */  
+.zoom-controls{  
+    position:absolute;  
+    bottom:10px;  
+    right:10px;  
+    display:flex;  
+    gap:8px;  
+    z-index:20;  
+}  
+.zoom-btn{  
+    width:36px;  
+    height:36px;  
+    border-radius:50%;  
+    border:none;  
+    background:#1a73e8;  
+    color:#fff;  
+    font-size:20px;  
+    cursor:pointer;  
+}  
+  
+/* SUCCESS SCREEN */  
+.success-screen{  
+    background:#0b0b0b;  
+    color:white;  
+    text-align:center;  
+    height:680px;  
+}  
+  
+.tick{  
+    width:90px;  
+    height:90px;  
+    background:#1E88E5;  
+    border-radius:50%;  
+    display:flex;  
+    justify-content:center;  
+    align-items:center;  
+    margin:60px auto 25px;  
+    font-size:48px;  
+}  
+  
+.amount{ font-size:42px; margin-bottom:20px; }  
+.label{ color:#9e9e9e; font-size:16px; }  
+.name{ font-size:26px; margin:8px 0; }  
+  
+.bank{  
+    display:flex;  
+    justify-content:center;  
+    align-items:center;  
+    gap:6px;  
+    font-size:15px;  
+    color:#cfcfcf;  
+    margin-bottom:20px;  
+}  
+  
+.time{ color:#9e9e9e; font-size:14px; }  
+  
+/* PROCESSING SPINNER */  
+.spinner{  
+    margin:40px auto;  
+    width:60px;  
+    height:60px;  
+    border:6px solid #1e1e1e;  
+    border-top:6px solid #1a73e8;  
+    border-radius:50%;  
+    animation: spin 1s linear infinite;  
+}  
+  
+@keyframes spin{  
+    0%{ transform: rotate(0deg); }  
+    100%{ transform: rotate(360deg); }  
+}  
+</style>  </head>  <body>  <div class="app">  
+<div class="header">Epay</div>  <!-- HOME SCREEN -->  <div class="screen" id="homeScreen">  
+    <div class="info" id="nameInfo"></div>  
+    <input type="text" id="receiver" placeholder="Receiver / UPI ID" readonly>  
+    <input type="number" id="amount" placeholder="₹ Enter Amount">  
+    <button onclick="startQR()"> Scan QR</button>  
+    <button onclick="goToPin()">Pay</button>  <div id="reader" class="hidden">  
+    <div class="zoom-controls">  
+        <button class="zoom-btn" onclick="zoomIn()">+</button>  
+        <button class="zoom-btn" onclick="zoomOut()">−</button>  
+    </div>  
 </div>
 
-<!-- PIN SCREEN -->
-<div class="screen hidden" id="pinScreen">
-    <p style="text-align:center;font-weight:bold;color:#fff;">Enter UPI PIN</p>
-    <input type="password" id="pin" maxlength="4" placeholder="••••">
-    <button onclick="processPayment()">Verify</button>
-</div>
-
-<!-- PROCESSING SCREEN -->
-<div class="screen hidden" id="processingScreen" style="text-align:center;color:#fff;">
-    <p style="font-weight:bold;font-size:20px;margin-top:200px;">Processing Payment...</p>
-    <div class="spinner"></div>
-</div>
-
-<!-- SUCCESS SCREEN -->
-<div class="screen hidden success-screen" id="successScreen">
-    <div class="tick">✓</div>
-    <div class="amount" id="finalAmount">₹0</div>
-    <div class="label">Paid to</div>
-    <div class="name" id="finalName"></div>
-    <div class="bank">Banking num: 16383838291</div>
-    <div class="time" id="timeStamp"></div>
-</div>
-</div>
-
-<script>
-let correctPin = "4567";
-let html5QrCode;
-let payeeName = "";
-let currentZoom = 1;
-let videoTrack = null;
-
-/* JS unchanged */
-</script>
-
-</body>
+</div>  <!-- PIN SCREEN -->  <div class="screen hidden" id="pinScreen">  
+    <p style="text-align:center;font-weight:bold;color:#fff;">Enter UPI PIN</p>  
+    <input type="password" id="pin" maxlength="4" placeholder="••••">  
+    <button onclick="processPayment()">Verify</button>  
+</div>  <!-- PROCESSING SCREEN -->  <div class="screen hidden" id="processingScreen" style="text-align:center;color:#fff;">  
+    <p style="font-weight:bold;font-size:20px;margin-top:200px;">Processing Payment...</p>  
+    <div class="spinner"></div>  
+</div>  <!-- SUCCESS SCREEN -->  <div class="screen hidden success-screen" id="successScreen">  
+    <div class="tick">✓</div>  
+    <div class="amount" id="finalAmount">₹0</div>  
+    <div class="label">Paid to</div>  
+    <div class="name" id="finalName"></div>  
+    <div class="bank">  
+    Banking num: 16383838291  
+    </div>  
+    <div class="time" id="timeStamp"></div>  
+</div>  
+</div>  <script>  
+let correctPin = "4567";  
+let html5QrCode;  
+let payeeName = "";  
+let currentZoom = 1;  
+let videoTrack = null;  
+  
+function applyZoom(){  
+    if(videoTrack){  
+        const capabilities = videoTrack.getCapabilities();  
+        if(capabilities.zoom){  
+            videoTrack.applyConstraints({  
+                advanced:[{ zoom: currentZoom }]  
+            });  
+        }  
+    }  
+}  
+  
+function zoomIn(){  
+    currentZoom = Math.min(currentZoom + 0.5, 4);  
+    applyZoom();  
+}  
+  
+function zoomOut(){  
+    currentZoom = Math.max(currentZoom - 0.5, 1);  
+    applyZoom();  
+}  
+  
+function startQR(){  
+    const reader = document.getElementById("reader");  
+    reader.classList.remove("hidden");  
+  
+    if(!html5QrCode){  
+        html5QrCode = new Html5Qrcode("reader");  
+    }  
+  
+    Html5Qrcode.getCameras().then(cameras=>{  
+        let cameraId = cameras[cameras.length - 1].id;  
+  
+        html5QrCode.start(  
+            cameraId,  
+            { fps:15, qrbox:{width:280,height:280}, aspectRatio:1 },  
+            decodedText=>{  
+                html5QrCode.stop();  
+                reader.classList.add("hidden");  
+  
+                if(decodedText.startsWith("upi://")){  
+                    if(navigator.vibrate) navigator.vibrate([100,50,100]);  
+  
+                    let params=new URLSearchParams(decodedText.split("?")[1]);  
+                    payeeName=decodeURIComponent(params.get("pn")||"Unknown");  
+                    receiver.value=params.get("pa")||"";  
+                    nameInfo.innerText="Paying to: "+payeeName;  
+  
+                    alert("QR Scanned Successfully ✅");  
+                }else{  
+                    alert("Invalid QR ❌");  
+                }  
+            }  
+        ).then(()=>{  
+            const video=document.querySelector("#reader video");  
+            if(video){  
+                videoTrack=video.srcObject.getVideoTracks()[0];  
+                currentZoom=2;      // AUTO ZOOM ON START  
+                applyZoom();  
+            }  
+  
+            setTimeout(()=>{  
+                const scanLine=document.createElement("div");  
+                scanLine.className="scan-line";  
+                scanLine.id="scanLine";  
+                reader.appendChild(scanLine);  
+            },300);  
+        });  
+    });  
+}  
+  
+function goToPin(){  
+    if(amount.value<=0){ alert("Enter valid amount"); return; }  
+    homeScreen.classList.add("hidden");  
+    pinScreen.classList.remove("hidden");  
+}  
+  
+function processPayment(){  
+    if(pin.value!==correctPin){ alert("Wrong PIN"); return; }  
+  
+    pinScreen.classList.add("hidden");  
+    processingScreen.classList.remove("hidden");  // show processing  
+  
+    setTimeout(()=>{  
+        processingScreen.classList.add("hidden");  
+        successScreen.classList.remove("hidden");  
+  
+        finalAmount.innerText="₹"+Number(amount.value).toFixed(2);  
+        finalName.innerText=payeeName;  
+  
+        let now=new Date();  
+        timeStamp.innerText=  
+            now.toLocaleDateString("en-IN")+" "+  
+            now.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});  
+    }, 2000);  // 2-second processing delay  
+}  
+</script>  </body>  
 </html>
